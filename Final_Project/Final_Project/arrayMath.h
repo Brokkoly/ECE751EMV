@@ -10,7 +10,7 @@
 #define ARRAYMATH_H_
 
 
-void add_arr(unsigned int x[], unsigned int y[], unsigned int z[], long m, long n);
+void add_arr(unsigned int* x, unsigned int* y, unsigned int* z, long m, long n);
 void mult_arr(unsigned int x[], unsigned int y[], unsigned int z[], long m, long n);
 
 
