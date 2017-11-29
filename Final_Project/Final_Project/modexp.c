@@ -10,6 +10,7 @@ int const R1 = 256;
 int const word = 32; //number of bits in a int variable
 int const full = 0xFFFFFFFF; //used to mask the bits of a 32 bit variable
 int const L = 3;	//number of bits of e
+//markup
 
 int Inter(int b, int d, int M)
 {
