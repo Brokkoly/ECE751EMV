@@ -8,10 +8,10 @@
 
 #ifndef ARRAYMATH_H_
 #define ARRAYMATH_H_
-
-
-void add_arr(unsigned int* x, unsigned int* y, unsigned int* z, long m, long n);
-void mult_arr(unsigned int x[], unsigned int y[], unsigned int z[], long m, long n);
+#include <math.h>
+#include <io.h>
+void add_arr(unsigned long* x, unsigned long* y, unsigned long* z, long m, long n);
+void mult_arr(unsigned short w[], unsigned short u[],unsigned short v[], int m, int n);
 
 
 
