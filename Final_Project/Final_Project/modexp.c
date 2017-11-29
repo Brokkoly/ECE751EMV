@@ -10,7 +10,8 @@ int const R1 = 256;
 int const word = 32; //number of bits in a int variable
 int const full = 0xFFFFFFFF; //used to mask the bits of a 32 bit variable
 int const L = 3;	//number of bits of e
-//markup
+int const EMASK = 4; //100 so the 1 is in the most significant bit of e
+int const BMASK = 128; //1 bit in the MSB of M so if k=8 BMASK = 128
 
 int Inter(int b, int d, int M)
 {
@@ -18,7 +19,7 @@ int Inter(int b, int d, int M)
 	int i = 0;
 	int I = 0;
 	int bi = 0;
-	int mask = 128;
+	int mask = BMASK;
 	for(i = k-1; i >= 0; i--){	//i >= k/2
 		Z = 2*Z;
 		bi = mask & b;
@@ -104,7 +105,7 @@ int expmod(int A, int e, int M)
 	int RmM = Inter(R2,R2,M);			//R^2modM
 	int Ahat = Inter(A,R2,M);		//(A*R)modM
 	//printf("RmM: %d\nAhat: %d\n",RmM,Ahat);
-	int mask = 4;
+	int mask = EMASK;
 	int ei;
 	for(i = l-1; i >= 0; i--){
 		Z = BMM(M,C,C,0,RmM);
