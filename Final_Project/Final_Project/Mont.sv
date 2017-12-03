@@ -7,9 +7,10 @@ module montgomery(clk, rst_n, xhat, yhat, M, Z, done, start);
 	localparam SIZEI = 3;
 
 	input [SIZEHAT-1:0] xhat;
-	input [SIZEM-1:0] yhat,M; //I think this is wasteful TODO:Check
+	input reg [SIZEHAT-1:0] yhat; //TODO: right size? and Reg because Vivado yelled at me
+	input [SIZEM-1:0] M; 
 	input clk, rst_n, start;
-	output reg [sizeM:0] Z;
+	output reg [SIZEM:0] Z;
 	output reg done;
 
 	reg [SIZEI-1:0] i;
@@ -50,8 +51,8 @@ module montgomery(clk, rst_n, xhat, yhat, M, Z, done, start);
 		end
 		BEGIN:begin
 			Z = 0;
-			Z = y[i] ? (Z+xhat) : Z;
-			Z = Z[i] ? (Z+M) : Z	//qm stuff: Add M if i bit is 1 TODO: CHECK
+			Z = yhat[i] ? (Z+xhat) : Z;
+			Z = Z[i] ? (Z+M) : Z;	//qm stuff: Add M if i bit is 1 TODO: CHECK
 			Z = Z>>1; //Divide by 2
 			if(Z >= M)begin
 						Z = Z - M;
@@ -63,8 +64,8 @@ module montgomery(clk, rst_n, xhat, yhat, M, Z, done, start);
 			nxt_state = MID;
 		end
 		MID:begin
-			Z = y[i] ? (Z+xhat) : Z;
-			Z = Z[i] ? (Z+M) : Z	//qm stuff: Add M if i bit is 1 TODO: CHECK
+			Z = yhat[i] ? (Z+xhat) : Z;
+			Z = Z[i] ? (Z+M) : Z;	//qm stuff: Add M if i bit is 1 TODO: CHECK
 			Z = Z>>1; //Divide by 2
 			if(Z >= M)begin
 						Z = Z - M;
@@ -76,8 +77,8 @@ module montgomery(clk, rst_n, xhat, yhat, M, Z, done, start);
 			nxt_state = MID;
 		end
 		END:begin
-			Z = y[i] ? (Z+xhat) : Z;
-			Z = Z[i] ? (Z+M) : Z	//qm stuff: Add M if i bit is 1 TODO: CHECK
+			Z = yhat[i] ? (Z+xhat) : Z;
+			Z = Z[i] ? (Z+M) : Z;	//qm stuff: Add M if i bit is 1 TODO: CHECK
 			Z = Z>>1; //Divide by 2
 			if(Z >= M)begin
 						Z = Z - M;
