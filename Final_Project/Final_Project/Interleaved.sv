@@ -5,9 +5,10 @@ module interleaved(clk,rst_n,b,d,M,Z,done,start);
 		localparam SIZEBD = 4;
 		localparam SIZEM = 8;
 		localparam SIZEI = 3;
+		localparam ZERO = 4'd0;// SIZEM-SIZEBD;
 		
-		input [SIZEBD-1:0] d;
-		input [SIZEM-1:0] b,M;
+		input [SIZEM-1:0] d,b;
+		input [SIZEM-1:0] M;
 		input clk,rst_n,start;
 		output reg [SIZEM:0] Z;
 		output reg done;
@@ -27,7 +28,7 @@ module interleaved(clk,rst_n,b,d,M,Z,done,start);
 				i <= SIZEM-1;
 				done <= 0;
 			end
-			else begin
+			else if(state != WAIT)begin
 				i <= i - 1;
 				if(i == 1)begin
 					state <= END;
@@ -42,9 +43,13 @@ module interleaved(clk,rst_n,b,d,M,Z,done,start);
 				end
 
 			end
+			else begin
+				done <= 0;
+			end
 
 		
 		always@(*)begin
+			Z = Z;
 			case(state)
 				WAIT:begin
 					Z = Z;
@@ -56,13 +61,13 @@ module interleaved(clk,rst_n,b,d,M,Z,done,start);
 					Z = Z<<1;
 					
 					Z = b[i] ? (Z+d) : Z;
-					/*
+					
 					if(Z >= M)begin
 						Z = Z - M;
 					end
 					if(Z >= M)begin
 						Z = Z - M;
-					end*/
+					end
 					nxt_state = MID;	
 				end
 				MID:begin
