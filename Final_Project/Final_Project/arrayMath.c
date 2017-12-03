@@ -7,6 +7,44 @@
 #include "arrayMath.h"
 #include <limits.h>
 
+void bitShiftLeft(unsigned long* x, long m){
+	//assuming pre-pro done for making sure that x has or doesn't need an extra long added to the top
+
+	int i;
+	unsigned long temp1;//grabs msb
+	unsigned long temp2;//previous msb
+	for(i = m-1; i >= 0; i--){
+		temp1 = x[i]&MSB;
+		x[i] = x[i]<<1;
+		temp2 = temp2>>31;
+		x[i] = x[i]|temp2;
+		temp2 = temp1;
+
+		
+	}
+
+
+
+}
+
+void bitShiftRight(unsigned long* x, long m){
+	int i;
+	unsigned long temp1;
+	unsigned long temp2=0;
+	//static long m = 2;
+	//unsigned long x[m] = {0xFFFFFFFF,0x00};
+
+	for(i = 0; i < m;i++){
+		temp1 = x[i]&LSB;
+		x[i] = x[i]>>1;
+		temp2 = temp2<<31;
+		x[i] = temp2|x[i];
+		temp2 = temp1;
+	}
+
+
+}
+
 
 void mult_arr(unsigned short w[], unsigned short u[],
 unsigned short v[], int m, int n) {//w = output
@@ -30,71 +68,118 @@ unsigned short v[], int m, int n) {//w = output
 }
 
 //void mult_arr(unsigned long x[], unsigned long y, unsigned long z,	long m, long n){
-	//unsigned long a,b;
-	//long i,j;
-	//for(i = 0; i < m; i++){
-		//z[i] = 0;
+//unsigned long a,b;
+//long i,j;
+//for(i = 0; i < m; i++){
+//z[i] = 0;
 //
-	//}
+//}
 //}
 
-void add_arr(unsigned long* x, unsigned long* y, unsigned long* z, long m, long n){//m corresponds to x's length, n is y's
+
+void sub_arr(unsigned long* x, unsigned long* y, unsigned long* z, long m, long n, long o){
+
+	//x is larger number, x-y never negative;
+	int i = 0;
+	unsigned char borrow = 0;
+	unsigned char borrowed = 0;
+	unsigned long ALF = 0xFFFFFFFF;
+	unsigned long temp;
+	int xindex;
+	int yindex;
+	int zindex;
+	for(i = 1; i < m;i++){
+		xindex = n-i;
+		yindex = m-i;
+		zindex = o-i;
+		z[zindex] = x[xindex];
+		if(borrowed){
+			if(z[zindex]==0){
+				borrow = 1;
+				z[zindex] = ALF;
+			}
+			else{
+				z[zindex]-= 1;
+			}
+		}
+		if(z[zindex] < y[yindex]){
+			borrow = 1;
+			temp = ALF - y[yindex];
+			temp = temp + 1;
+			temp = temp + z[zindex];
+			z[zindex] = temp;
+		}
+		else{
+			z[zindex]-= y[yindex];
+		}
+		borrowed = borrow;
+
+	}
+}
+
+void add_arr(unsigned long* x, unsigned long* y, unsigned long* z, long m, long n,long o){//m corresponds to x's length, n is y's
 	long min;
 	long i;
 	unsigned long a,b;
 	char carry = 0;
 	char temp_carry = 0;
 	long num_max = max(n,m);
-	
+	int xindex;
+	int yindex;
+	int zindex;
 	//#asm("cli")
 	//SREG = (SREG&0xFE);//TODO: Note to self, figure out byte storage
 	
-	for(i = 0; i < num_max;i++){
-		if(i > m-1){
-			a = 0;
-		a = x[i];		}
-		else{
+	for(i = 1; i <= num_max;i++){
+		xindex = m-i;
+		yindex = n-i;
+		zindex = o-i;
 
+		if(xindex < 0){
+			a = 0;
 		}
-		if(i > n-1){
+		else{
+			a = x[xindex];
+		}
+		if(yindex < 0){
 			b = 0;
 		}
 		else{
-			b = y[i];
+			b = y[yindex];
 		}
 		//if(()))
 		
-		if((z[i]>0)&&(carry>ULONG_MAX-z[i])){
+		if((z[zindex]>0)&&(carry>ULONG_MAX-z[zindex])){
 			temp_carry = 1;
 		}
 		else{
 			temp_carry = 0;
 		}
-		z[i] += carry;
+		z[zindex] += carry;
 		carry = temp_carry;
 		//if(!carry){
-			//carry = SREG;
-			//carry = carry&0x01;
+		//carry = SREG;
+		//carry = carry&0x01;
 		//}
-		if((z[i] > 0)&&(a>ULONG_MAX-z[i])){
+		if((z[zindex] > 0)&&(a>ULONG_MAX-z[zindex])){
 			carry = 1;
 		}
-		z[i] += a;
-		if(z[i])
+		z[zindex] += a;
+		if(z[zindex])
 		//if(!carry){
-			//carry = SREG;
-			//carry = carry&0x01;
+		//carry = SREG;
+		//carry = carry&0x01;
 		//}
-		if((z[i] > 0)&&(b>ULONG_MAX-z[i])){
+		if((z[zindex] > 0)&&(b>ULONG_MAX-z[zindex])){
 			carry = 1;
 		}
-		z[i] += b;
+		z[zindex] += b;
 		//if(!carry){
-			//carry = SREG;
-			//carry = carry&0x01;
+		//carry = SREG;
+		//carry = carry&0x01;
 		//}
 	}
-	z[num_max] = carry;
+	z[0] = carry;
 	//#asm("sti")
 }
 
