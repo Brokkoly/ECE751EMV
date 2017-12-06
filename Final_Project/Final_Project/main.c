@@ -1,62 +1,144 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+//#include <exampleNums.h>
+#include "arrayMath.h"
 
 
-int const k = 8; //number bits of M (k needs to be even?)
-int const n = 4; //k/2
-int const R2 = 16; //2^n
-int const R1 = 256;
-int const word = 32; //number of bits in a int variable
-int const full = 0xFFFFFFFF; //used to mask the bits of a 32 bit variable
+//long const SIZE = 512;
+long const k = 8; //number bits of M (k needs to be even?)
+long const n = 4; //k/2
+long const R2 = 16; //2^n
+long const R1 = 256;
+long const word = SIZE*32; //number of bits in a long variable
+
+//unsigned long const full = 0xFFFFFFFF; //used to mask the bits of a 32 bit variable
+struct IOUS full;
 int const L = 3;	//number of bits of e
-int const EMASK = 4; //100 so the 1 is in the most significant bit of e
-int const BMASK = 128; //1 bit in the MSB of M so if k=8 BMASK = 128
+//int const EMASK = 4; //100 so the 1 is in the most significant bit of e
+struct IOUS EMASK;
+struct IOUS BMASK;
+//int const BMASK = 128; //1 bit in the MSB of M so if k=8 BMASK = 128
 
-int Inter(int b, int d, int M)
+
+
+
+void setup(){
+	
+	int i;
+	full = createArr();
+	for(i = 0; i < full.size;i++){
+		full.arr[i] = 0xFFFFFFFF;
+	}
+	EMASK = createArr();
+	EMASK.arr[EMASK.size-1] = 4;
+	
+	BMASK= createArr();
+	BMASK.arr[BMASK.size-1] = 128;
+}
+
+
+
+IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M)//
 {
-	int Z = 0;
-	int i = 0;
-	int I = 0;
-	int bi = 0;
-	int mask = BMASK;
+	
+	struct IOUS Z = createArr();
+	long i = 0;
+	struct IOUS I = createArr();
+	struct IOUS bi = createArr();
+	struct IOUS mask = arrCopy(BMASK);
+	long j = 0;
+	struct IOUS temp;
+	
+	//
 	for(i = k-1; i >= 0; i--){	//i >= k/2
-		Z = 2*Z;
-		bi = mask & b;
-		bi = bi>>i;
+		//Z = 2*Z;
+		bitShiftLeft(Z);
 
-		I = bi * d;
+		
+		//bi = mask & b;
+		bitwiseAnd(mask,b,bi);
+		//bi = bi>>i;
+		for(j = 0; j < i;j++){
+			bitShiftRight(bi);
+		}
+		//I = bi * d; solution:
+		if(bi){//TODO
+			//Z = Z+d;
+			temp = arrCopy(Z);
+			zeroArr(Z);
+			add_arr(temp,d,Z);
+			freeArr(temp);
+		}
 		//printf("I: %d\n",I);
-		Z = Z + I;
-		if(Z >= M){
+		//Z = Z + I;:
+		temp = arrCopy(Z);
+		zeroArr(Z);
+		add_arr(temp,d,Z);
+		freeArr(temp);
+		/*if(Z >= M){
 			Z = Z - M;
 		}
 		if(Z >= M){
 			Z = Z - M;
+		}*/
+		if(greaterThanEqual(Z,M)){
+			temp = arrCopy(Z);
+			zeroArr(Z);
+			sub_arr(temp,M,Z);
+			freeArr(temp);
+		}
+		if(greaterThanEqual(Z,M)){
+			temp = arrCopy(Z);
+			zeroArr(Z);
+			sub_arr(temp,M,Z);
+			freeArr(temp);
 		}
 		//printf("Z: %d\nbi: %d\n",Z,bi);
-		mask = mask>>1;
+		//mask = mask>>1;
+		bitShiftRight(mask);
 	}
+	freeArr(I);
+	freeArr(bi);
+	freeArr(mask);
 	return Z;
 }
 
-int Mont(int xhat, int yhat, int M)
+int Mont(struct IOUS xhat, struct IOUS yhat, struct IOUS M)
 {
-	int Z = 0;
+	//int Z = 0;//IOUS
+	struct IOUS Z = createArr();
 	int i = 0;
-	int I = 0;
-	int yi = 0;
-	int qm = 0;
-	int mask = 1;
+	//int I = 0;//IOUS
+	struct IOUS I = createArr();
+	//int yi = 0;//IOUS
+	struct IOUS yi = createArr();
+	//int qm = 0;//IOUS
+	struct IOUS qm = createArr();
+	//int mask = 1;
+	struct IOUS mask = createArr();
+	mask.arr[mask.size-1] = 1;
+	struct IOUS temp;
 	//printf("Xhat: %d\nYhat: %d\n",xhat,yhat);
 	for(i=0; i < n; i++){ //i < k/2
-		yi = mask & yhat;
-		I = yi * xhat;
+		
+		//yi = mask & yhat;
+		bitwiseAnd(mask,yhat,yi);
+		I = yi * xhat;//TODO
+
 		//printf("I: %d\n",I);
-		Z = Z + I;
-		qm = mask & Z;
-		Z = Z + qm*M;
-		Z = Z/2;
+
+		//Z = Z + I;//
+		temp = arrCopy(Z);
+		zeroArr(Z);
+		add_arr(temp,d,Z);
+		freeArr(temp);
+		//qm = mask & Z;
+		bitwiseAnd(mask,Z,qm);
+		Z = Z + qm*M;//same as other multiplication//TODO
+		//Z = Z/2;
+		bitShiftRight(Z);
+
 		if(Z >= M){
 			Z = Z - M;
 		}
@@ -74,7 +156,7 @@ int BMM(int M, int T, int U, int sel, int RmM)
 	unsigned int Yhat;
 	if(!sel){
 		Yhat = Inter(U,R2,M);
-	}else{
+		}else{
 		Yhat = U;
 	}
 	int maskH = full;
@@ -127,16 +209,29 @@ int expmod(int A, int e, int M)
 	return C;
 }
 
-int main(int argc, char* argv[]) 
+
+
+
+
+
+int main(int argc, char* argv[])
 {
 	if(argc != 4){
 		printf("Wrong Arguments!: ./modexp A e M\n");
 		return 1;
 	}
+
+
+	setup();
 	/*if(sizeof(int) !=4 ){
-		printf("size of int != 4: size: %ld\n",sizeof(int));
-		return 1;
+	printf("size of int != 4: size: %ld\n",sizeof(int));
+	return 1;
 	}*/
+
+
+
+
+
 	int A = atoi(argv[1]);
 	int e = atoi(argv[2]);
 	int M = atoi(argv[3]);
@@ -148,7 +243,7 @@ int main(int argc, char* argv[])
 	if(C_check != C){
 		printf("Wrong Output:\nGot: %d\nExpected: %d\n",C,C_check);
 		printf("Are you sure M is an odd prime number?\nAre you sure the constants of bit sizes are set correctly?\n");
-	}else{
+		}else{
 		printf("Correct: C=%d\n",C);
 	}
 	/*int In;
