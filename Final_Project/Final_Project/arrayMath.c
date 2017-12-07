@@ -250,3 +250,11 @@ void bitwiseAnd(struct IOUS X, struct IOUS Y, struct IOUS Z){
 }
 //void bitwiseAndOneLong(struct IOUS X, unsigned long y, )
 
+char arrToBool(struct IOUS X){
+	int i;
+	for(i = 0; i < X.size;i++){
+		if(X.arr[i]){
+		return 1;
+	}
+	return 0;
+}

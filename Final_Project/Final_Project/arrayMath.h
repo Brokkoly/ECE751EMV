@@ -30,4 +30,6 @@ void sub_arr(struct IOUS x, struct IOUS y, struct IOUS z);
 struct IOUS createArr();
 void freeArr(struct IOUS X);
 void zeroArr(struct IOUS X);
+char arrToBool(struct IOUS X);
+struct IOUS arrCopy(struct IOUS origin);
 #endif /* ARRAYMATH_H_ */

@@ -39,7 +39,7 @@ void setup(){
 
 
 
-IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M)//
+struct IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M)//
 {
 	
 	struct IOUS Z = createArr();
@@ -63,7 +63,7 @@ IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M)//
 			bitShiftRight(bi);
 		}
 		//I = bi * d; solution:
-		if(bi){//TODO
+		if(arrToBool(bi)){
 			//Z = Z+d;
 			temp = arrCopy(Z);
 			zeroArr(Z);
@@ -77,10 +77,10 @@ IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M)//
 		add_arr(temp,d,Z);
 		freeArr(temp);
 		/*if(Z >= M){
-			Z = Z - M;
+		Z = Z - M;
 		}
 		if(Z >= M){
-			Z = Z - M;
+		Z = Z - M;
 		}*/
 		if(greaterThanEqual(Z,M)){
 			temp = arrCopy(Z);
@@ -104,7 +104,7 @@ IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M)//
 	return Z;
 }
 
-int Mont(struct IOUS xhat, struct IOUS yhat, struct IOUS M)
+struct IOUS Mont(struct IOUS xhat, struct IOUS yhat, struct IOUS M)
 {
 	//int Z = 0;//IOUS
 	struct IOUS Z = createArr();
@@ -124,86 +124,168 @@ int Mont(struct IOUS xhat, struct IOUS yhat, struct IOUS M)
 		
 		//yi = mask & yhat;
 		bitwiseAnd(mask,yhat,yi);
-		I = yi * xhat;//TODO
-
+		
+		//I = yi * xhat;//
+		if(arrToBool(yi)){
+			freeArr(I);
+			I = arrCopy(xhat);
+		}
 		//printf("I: %d\n",I);
 
 		//Z = Z + I;//
 		temp = arrCopy(Z);
 		zeroArr(Z);
-		add_arr(temp,d,Z);
+		add_arr(temp,I,Z);
 		freeArr(temp);
 		//qm = mask & Z;
 		bitwiseAnd(mask,Z,qm);
-		Z = Z + qm*M;//same as other multiplication//TODO
+
+		//Z = Z + qm*M;//same as other multiplication
+		if(arrToBool(qm)){
+			temp = arrCopy(Z);
+			zeroArr(Z);
+			add_arr(temp,M,Z);
+			freeArr(temp);
+		}
 		//Z = Z/2;
 		bitShiftRight(Z);
 
-		if(Z >= M){
-			Z = Z - M;
+		//if(Z >= M){
+		//Z = Z - M;
+		//}
+		if(greaterThanEqual(Z,M)){
+			temp = arrCopy(Z);
+			zeroArr(Z);
+			sub_arr(temp,M,Z);
+			freeArr(temp);
 		}
 		//printf("Z: %d\nyi: %d\n",Z,yi);
-		yhat = yhat>>1;
+		//yhat = yhat>>1;
+		bitShiftRight(yhat);
 	}
 
+
+	freeArr(I);
+	freeArr(yi);
+	freeArr(qm);
+	freeArr(mask);
 	return Z;
 }
 
-int BMM(int M, int T, int U, int sel, int RmM)
+int BMM(struct IOUS M,struct IOUS T,struct IOUS U, int sel, int RmM)
 {
-	int Z = 0;
-	int Xhat = Inter(T,R2,M);
-	unsigned int Yhat;
+	int i;
+	//int Z = 0;
+	IOUS Z = createArr();
+	//int Xhat = Inter(T,R2,M);
+	IOUS Xhat = Inter(T,R2,M);
+	//unsigned int Yhat;
+	IOUS Yhat = createArr;
 	if(!sel){
 		Yhat = Inter(U,R2,M);
-		}else{
+	}
+	else{
 		Yhat = U;
 	}
-	int maskH = full;
-	maskH = maskH<<n;
-	int YH = maskH & Yhat;
-	YH = YH>>n;
-	unsigned int shftAmnt = word - n; //32 - 4 + 2 will leave only the bottom bits for YL
-	unsigned int YL = Yhat;
-	YL = YL<<shftAmnt;
-	YL = YL>>shftAmnt;
+	struct IOUS maskH = arrCopy(full);
+	//maskH = maskH<<n;
 
-	int Ii = Inter(Xhat,YH,M);
-	int Im = Mont(Xhat,YL,M);
+	for(i = 0; i < n;i++){
+		bitShiftLeft(maskH);
+	}
+	struct IOUS YH;
+	//int YH = maskH & Yhat;
+	bitwiseAnd(maskH,Yhat,YH);
+	//YH = YH>>n;
+	for(i = 0; i < n;i++){
+		bitShiftRight(YH);
+	}
+	
+	unsigned int shftAmnt = word - n; //32 - 4 + 2 will leave only the bottom bits for YL
+	//unsigned int YL = Yhat;
+	struct IOUS YL = arrCopy(Yhat);
+	
+	
+	//YL = YL<<shftAmnt;
+	//YL = YL>>shftAmnt;
+	for(i = 0; i < shftAmnt;i++){
+		bitShiftLeft(YL);
+	}
+	for(i = 0; i < shftAmnt;i++){
+		bitShiftRight(YL);
+	}
+
+	struct IOUS Ii = Inter(Xhat,YH,M);
+	struct IOUS Im = Mont(Xhat,YL,M);
 	//printf("Ii: %d\nIm: %d\n",Ii,Im);
-	Z = Ii + Im;
+	//Z = Ii + Im;
+	add_arr(Ii,Im,Z);
 	Z = Inter(Z,1,M);
 
 	return Z;
+	freeArr(Ii);
+	freeArr(Im);
+	freeArr(YL);
+	freeArr(Yhat);
+	freeArr(YH);
+	freeArr(Xhat);
+	freeArr(maskH);
 }
 
-int expmod(int A, int e, int M)
+struct IOUS expmod(struct IOUS A, struct IOUS e, struct IOUS M)
 {
-	int C = 1;
+	//int C = 1;
+	struct IOUS C = createArr();
+	C.arr[C.size-1]= 1;
 	int l = L;
 	//printf("l %d\n", l);
 	int i = 0;
-	int Z = 0;
-	int RmM = Inter(R2,R2,M);			//R^2modM
-	int Ahat = Inter(A,R2,M);		//(A*R)modM
+	int j = 0;
+	struct IOUS cinput = createArr();
+	cinput.arr[cinput.size=1]= 1;
+	//int Z = 0;
+	struct IOUS Z;
+	struct IOUS RmM = Inter(R2,R2,M);			//R^2modM
+	struct IOUS Ahat = Inter(A,R2,M);		//(A*R)modM
 	//printf("RmM: %d\nAhat: %d\n",RmM,Ahat);
-	int mask = EMASK;
-	int ei;
+	struct IOUS mask = arrCopy(EMASK);
+	//int ei;
+	struct IOUS ei;// = createArr();
 	for(i = l-1; i >= 0; i--){
+		
 		Z = BMM(M,C,C,0,RmM);
 		//printf("Zmid: %d\n", Z);
-		C = Mont(Z,1,M);
+		freeArr(C);
+		C = Mont(Z,cinput,M);//
+		zeroArr(cinput);
+		cinput.arr[cinput.size-1] = 1;
 		//printf("Cmid: %d\n",C);
-		ei = mask & e;
-		ei = ei>>i;
+		//ei = mask & e;
+		ei = bitwiseAnd(mask,e);
+		//ei = ei>>i;
+		for(j = 0; j < i;j++){
+			bitShiftRight(ei);
+		}
+		
 		//printf("ei: %d\n",ei);
-		if(ei){ //if ei == 1
+		/*if(ei){ //if ei == 1
 			Z = BMM(M,C,Ahat,1,RmM);
 			C = Mont(Z,1,M);
+		}*/
+		if(arrToBool(ei)){
+			freeArr(Z);
+			Z = BMM(M,C,Ahat,cinput,RmM);
+			zeroArr(cinput);
+			cinput.arr[cinput.size-1] = 1;
+			zeroArr(C);
+			C = Mont(Z,cinput,M);
 		}
 		//C = Z;
 		//printf("C: %d\n", C);
-		mask = mask >> 1;
+
+		//mask = mask >> 1;
+		bitShiftRight(mask);
+		freeArr(Z);
 	}
 
 	return C;
