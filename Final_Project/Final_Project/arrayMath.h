@@ -24,7 +24,7 @@ void add_arr(struct IOUS x, struct IOUS y, struct IOUS z);
 void bitShiftRight(struct IOUS X);//rewrite to not be destructive
 void bitShiftLeft(struct IOUS X);
 char greaterThanEqual(struct IOUS X, struct IOUS Y);
-struct IOUS bitwiseAnd(struct IOUS X, struct IOUS Y,struct IOUS Z);
+void bitwiseAnd(struct IOUS X, struct IOUS Y,struct IOUS Z);
 
 void sub_arr(struct IOUS x, struct IOUS y, struct IOUS z);
 struct IOUS createArr();
@@ -32,4 +32,5 @@ void freeArr(struct IOUS X);
 void zeroArr(struct IOUS X);
 char arrToBool(struct IOUS X);
 struct IOUS arrCopy(struct IOUS origin);
+char equal(struct IOUS X, struct IOUS Y);
 #endif /* ARRAYMATH_H_ */

@@ -47,7 +47,7 @@ void bitShiftLeft(struct IOUS X){//assuming pre-pro done for making sure that x 
 		x[i] = x[i]<<1;
 		temp2 = temp2>>31;
 		x[i] = x[i]|temp2;
-		temp2 = temp1;	
+		temp2 = temp1;
 	}
 }
 
@@ -73,22 +73,22 @@ void bitShiftRight(struct IOUS X){
 void mult_arr(unsigned short w[], unsigned short u[],
 unsigned short v[], int m, int n) {//w = output
 
-	unsigned int k, t;
-	int i, j;
+unsigned int k, t;
+int i, j;
 
-	for (i = 0; i < m; i++)
-	w[i] = 0;
+for (i = 0; i < m; i++)
+w[i] = 0;
 
-	for (j = 0; j < n; j++) {
-		k = 0;
-		for (i = 0; i < m; i++) {
-			t = u[i]*v[j] + w[i + j] + k;
-			w[i + j] = t;          // (I.e., t & 0xFFFF).
-			k = t >> 16;
-		}
-		w[j + m] = k;
-	}
-	return;
+for (j = 0; j < n; j++) {
+k = 0;
+for (i = 0; i < m; i++) {
+t = u[i]*v[j] + w[i + j] + k;
+w[i + j] = t;          // (I.e., t & 0xFFFF).
+k = t >> 16;
+}
+w[j + m] = k;
+}
+return;
 }
 
 //void mult_arr(unsigned long x[], unsigned long y, unsigned long z,	long m, long n){
@@ -237,10 +237,15 @@ char greaterThanEqual(struct IOUS X, struct IOUS Y){
 			break;
 		}
 	}
-	return retval
+	return retval;
+}
 
-
-
+char equal(struct IOUS X, struct IOUS Y){
+	int i = 0;
+	for(i = 0; i < X.size;i++){
+		if(X.arr[i]!=Y.arr[i]) return 0;
+	}
+	return 1;
 }
 void bitwiseAnd(struct IOUS X, struct IOUS Y, struct IOUS Z){
 	int i;
@@ -254,7 +259,8 @@ char arrToBool(struct IOUS X){
 	int i;
 	for(i = 0; i < X.size;i++){
 		if(X.arr[i]){
-		return 1;
+			return 1;
+		}
 	}
 	return 0;
 }
