@@ -9,9 +9,9 @@
 
 struct IOUS arrCopy(struct IOUS origin){
 	struct IOUS retval;
-	long i = 0;
+	int i = 0;
 	retval.size = origin.size;
-	retval.arr = malloc(sizeof(unsigned long)*SIZE);
+	retval.arr = malloc(sizeof(unsigned int)*SIZE);
 	for(i = 0; i < retval.size;i++){
 		retval.arr[i] = origin.arr[i];
 	}
@@ -22,26 +22,29 @@ void zeroArr(struct IOUS X){
 	int i;
 	for(i = 0; i < X.size;i++){
 		X.arr[i]=0;
+
 	}
+
 }
 
 void freeArr(struct IOUS X){
 	free(X.arr);
+	X.arr = NULL;
 }
 
 struct IOUS createArr(){
 	struct IOUS X;
-	X.arr = malloc(SIZE*sizeof(unsigned long));
+	X.arr = malloc(SIZE*sizeof(unsigned int));
 	X.size = SIZE;
 	return X;
 }
 
-void bitShiftLeft(struct IOUS X){//assuming pre-pro done for making sure that x has or doesn't need an extra long added to the top
-	unsigned long* x = X.arr;
-	long m = X.size;
+void bitShiftLeft(struct IOUS X){//assuming pre-pro done for making sure that x has or doesn't need an extra int added to the top
+	unsigned int* x = X.arr;
+	int m = X.size;
 	int i;
-	unsigned long temp1;//grabs msb
-	unsigned long temp2;//previous msb
+	unsigned int temp1;//grabs msb
+	unsigned int temp2;//previous msb
 	for(i = m-1; i >= 0; i--){
 		temp1 = x[i]&MSB;
 		x[i] = x[i]<<1;
@@ -52,13 +55,13 @@ void bitShiftLeft(struct IOUS X){//assuming pre-pro done for making sure that x 
 }
 
 void bitShiftRight(struct IOUS X){
-	unsigned long* x = X.arr;
-	long m = X.size;
+	unsigned int* x = X.arr;
+	int m = X.size;
 	int i;
-	unsigned long temp1;
-	unsigned long temp2=0;
-	//static long m = 2;
-	//unsigned long x[m] = {0xFFFFFFFF,0x00};
+	unsigned int temp1;
+	unsigned int temp2=0;
+	//static int m = 2;
+	//unsigned int x[m] = {0xFFFFFFFF,0x00};
 
 	for(i = 0; i < m;i++){
 		temp1 = x[i]&LSB;
@@ -91,9 +94,9 @@ w[j + m] = k;
 return;
 }
 
-//void mult_arr(unsigned long x[], unsigned long y, unsigned long z,	long m, long n){
-//unsigned long a,b;
-//long i,j;
+//void mult_arr(unsigned int x[], unsigned int y, unsigned int z,	int m, int n){
+//unsigned int a,b;
+//int i,j;
 //for(i = 0; i < m; i++){
 //z[i] = 0;
 //
@@ -103,17 +106,17 @@ return;
 
 void sub_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){
 	//x is larger number, x-y never negative;
-	unsigned long* x = X.arr;
-	unsigned long* y = Y.arr;
-	unsigned long* z = Z.arr;
-	long m = X.size;
-	long n = Y.size;
-	long o = Z.size;
+	unsigned int* x = X.arr;
+	unsigned int* y = Y.arr;
+	unsigned int* z = Z.arr;
+	int m = X.size;
+	int n = Y.size;
+	int o = Z.size;
 	int i = 0;
 	unsigned char borrow = 0;
 	unsigned char borrowed = 0;
-	unsigned long ALF = 0xFFFFFFFF;
-	unsigned long temp;
+	unsigned int ALF = 0xFFFFFFFF;
+	unsigned int temp;
 	int xindex;
 	int yindex;
 	int zindex;
@@ -148,18 +151,18 @@ void sub_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){
 
 void add_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){//m corresponds to x's length, n is y's
 	
-	unsigned long* x = X.arr;
-	unsigned long* y = Y.arr;
-	unsigned long* z = Z.arr;
-	long m = X.size;
-	long n = Y.size;
-	long o = Z.size;
-	long min;
-	long i;
-	unsigned long a,b;
+	unsigned int* x = X.arr;
+	unsigned int* y = Y.arr;
+	unsigned int* z = Z.arr;
+	int m = X.size;
+	int n = Y.size;
+	int o = Z.size;
+	int min;
+	int i;
+	unsigned int a,b;
 	char carry = 0;
 	char temp_carry = 0;
-	long num_max = max(n,m);
+	int num_max = X.size;//max(n,m);
 
 	
 
@@ -169,7 +172,7 @@ void add_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){//m corresponds to x's
 	//#asm("cli")
 	//SREG = (SREG&0xFE);//TODO: Note to self, figure out byte storage
 	
-	for(i = 1; i <= num_max;i++){
+	for(i = 0; i <= num_max;i++){
 		xindex = m-i;
 		yindex = n-i;
 		zindex = o-i;
@@ -188,7 +191,7 @@ void add_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){//m corresponds to x's
 		}
 		//if(()))
 		
-		if((z[zindex]>0)&&(carry>ULONG_MAX-z[zindex])){
+		if((z[zindex]>0)&&(carry>UINT_MAX-z[zindex])){
 			temp_carry = 1;
 		}
 		else{
@@ -200,7 +203,7 @@ void add_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){//m corresponds to x's
 		//carry = SREG;
 		//carry = carry&0x01;
 		//}
-		if((z[zindex] > 0)&&(a>ULONG_MAX-z[zindex])){
+		if((z[zindex] > 0)&&(a>UINT_MAX-z[zindex])){
 			carry = 1;
 		}
 		z[zindex] += a;
@@ -209,7 +212,7 @@ void add_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){//m corresponds to x's
 		//carry = SREG;
 		//carry = carry&0x01;
 		//}
-		if((z[zindex] > 0)&&(b>ULONG_MAX-z[zindex])){
+		if((z[zindex] > 0)&&(b>UINT_MAX-z[zindex])){
 			carry = 1;
 		}
 		z[zindex] += b;
@@ -218,13 +221,16 @@ void add_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){//m corresponds to x's
 		//carry = carry&0x01;
 		//}
 	}
-	z[0] = carry;
+	//printArr(Z,"Z");
+	if(carry){
+		printf("unhandled carry");
+	}
 	//#asm("sti")
 }
 
 char greaterThanEqual(struct IOUS X, struct IOUS Y){
-	unsigned long* x = X.arr;
-	unsigned long* y = Y.arr;
+	unsigned int* x = X.arr;
+	unsigned int* y = Y.arr;
 
 	int i = 0;
 	char retval = 1;
@@ -247,13 +253,29 @@ char equal(struct IOUS X, struct IOUS Y){
 	}
 	return 1;
 }
+
+void printArr(struct IOUS toPrint,char* name){
+	int i;
+	printf("Array %s: ",name);
+	for(i=0;i<toPrint.size;i++){
+
+		printf("%x ",toPrint.arr[i]);
+	}
+	printf("\n");
+
+}
 void bitwiseAnd(struct IOUS X, struct IOUS Y, struct IOUS Z){
 	int i;
+	//printf("X.size: %d\n",X.size);
+
+	//printf("Z[0] exists:%d\n",Z.arr[0]);
+	//printf("y exists\n");
+	//printf("z exists\n");
 	for(i = 0; i < X.size;i++){
 		Z.arr[i] = X.arr[i]&Y.arr[i];
 	}
 }
-//void bitwiseAndOneLong(struct IOUS X, unsigned long y, )
+//void bitwiseAndOneint(struct IOUS X, unsigned int y, )
 
 char arrToBool(struct IOUS X){
 	int i;

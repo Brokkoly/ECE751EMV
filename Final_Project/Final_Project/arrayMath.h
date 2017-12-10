@@ -12,11 +12,11 @@
 
 #define MSB 0x80000000
 #define LSB 0x1
-#define SIZE 512
+#define SIZE 2
 //#define ALF 0xFFFFFFFF
 struct IOUS {//Integers of Unusual Size
-	unsigned long* arr;
-	long size;
+	unsigned int* arr;
+	int size;
 };
 void add_arr(struct IOUS x, struct IOUS y, struct IOUS z);
 //void mult_arr(unsigned short w[], unsigned short u[],unsigned short v[], int m, int n);
@@ -33,4 +33,5 @@ void zeroArr(struct IOUS X);
 char arrToBool(struct IOUS X);
 struct IOUS arrCopy(struct IOUS origin);
 char equal(struct IOUS X, struct IOUS Y);
+void printArr(struct IOUS toPrint,char* name);
 #endif /* ARRAYMATH_H_ */

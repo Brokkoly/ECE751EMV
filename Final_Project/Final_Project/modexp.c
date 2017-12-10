@@ -107,7 +107,7 @@ int expmod(int A, int e, int M)
 	//printf("RmM: %d\nAhat: %d\n",RmM,Ahat);
 	int mask = EMASK;
 	int ei;
-	for(i = l-1; i >= 0; i--){
+	for(i = l-1; i >= 0; i--){//should it be i>=n?
 		Z = BMM(M,C,C,0,RmM);
 		//printf("Zmid: %d\n", Z);
 		C = Mont(Z,1,M);
@@ -140,7 +140,8 @@ int main(int argc, char* argv[])
 	int A = atoi(argv[1]);
 	int e = atoi(argv[2]);
 	int M = atoi(argv[3]);
-
+	printf("A = %d, e = %d M = %d\n",A,e,M);
+	printf("A = %x, e = %x M = %x\n",A,e,M);
 	int C = expmod(A,e,M);
 	int C_check;
 	C_check = pow(A,e);
