@@ -188,7 +188,7 @@ struct IOUS Mont(struct IOUS xhat, struct IOUS yhat, struct IOUS M)
 	return Z;
 }
 
-int BMM(struct IOUS M,struct IOUS T,struct IOUS U, int sel, int RmM)
+struct IOUS BMM(struct IOUS M,struct IOUS T,struct IOUS U, int sel, struct IOUS RmM)
 {
 	int i;
 	struct IOUS Yhat;
@@ -272,6 +272,7 @@ struct IOUS expmod(struct IOUS A, struct IOUS e, struct IOUS M)
 	struct IOUS Z;
 	struct IOUS RmM;
 	struct IOUS Ahat;
+	struct IOUS Zeroes;
 	C= createArr();
 	C.arr[C.size-1]= 1;
 	
@@ -287,8 +288,9 @@ struct IOUS expmod(struct IOUS A, struct IOUS e, struct IOUS M)
 	mask = arrCopy(EMASK);
 	//int ei;
 	// = createArr();
+	Zeroes = createArr();
 	for(i = l-1; i >= 0; i--){
-		
+		zeroArr(Zeroes);
 		Z = BMM(M,C,C,0,RmM);
 		//printf("Zmid: %d\n", Z);
 		freeArr(C);
@@ -310,7 +312,7 @@ struct IOUS expmod(struct IOUS A, struct IOUS e, struct IOUS M)
 		}*/
 		if(arrToBool(ei)){
 			freeArr(Z);
-			Z = BMM(M,C,Ahat,cinput,RmM);
+			Z = BMM(M,C,Ahat,1,RmM);
 			zeroArr(cinput);
 			cinput.arr[cinput.size-1] = 1;
 			zeroArr(C);
@@ -340,11 +342,12 @@ void main(int argc, char* argv[])
 	int i;
 	struct IOUS M;
 	struct IOUS C;
+	struct IOUS C_check;
 	char breakpoint;
 
 	if(argc != 4){
 		printf("Wrong Arguments!: ./modexp A e M\n");
-		return 1;
+		return;
 	}
 
 
@@ -375,7 +378,7 @@ void main(int argc, char* argv[])
 	}
 	C = expmod(A,e,M);
 
-	struct IOUS C_check = createArr();
+	C_check = createArr();
 	for(i = 0; i < C_check.size;i++){
 		C_check.arr[i] = C_arr[i];
 	}
