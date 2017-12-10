@@ -3,15 +3,15 @@
 #include <math.h>
 
 
-int const k = 8; //number bits of M (k needs to be even?)
-int const n = 4; //k/2
-int const R2 = 16; //2^n
+int const k = 16; //number bits of M (k needs to be even?)
+int const n = 8; //k/2
+int const R2 = 256; //2^n
 int const R1 = 256;
 int const word = 32; //number of bits in a int variable
 int const full = 0xFFFFFFFF; //used to mask the bits of a 32 bit variable
-int const L = 3;	//number of bits of e
-int const EMASK = 4; //100 so the 1 is in the most significant bit of e
-int const BMASK = 128; //1 bit in the MSB of M so if k=8 BMASK = 128
+int const L = 16;	//number of bits of e
+int const EMASK = 0x8000; //100 so the 1 is in the most significant bit of e
+int const BMASK = 0x8000; //1 bit in the MSB of M so if k=8 BMASK = 128
 
 int Inter(int b, int d, int M)
 {
@@ -129,8 +129,8 @@ int expmod(int A, int e, int M)
 
 int main(int argc, char* argv[]) 
 {
-	if(argc != 4){
-		printf("Wrong Arguments!: ./modexp A e M\n");
+	if(argc != 5){
+		printf("Wrong Arguments!: ./modexp A e M C_check\n");
 		return 1;
 	}
 	/*if(sizeof(int) !=4 ){
@@ -140,12 +140,13 @@ int main(int argc, char* argv[])
 	int A = atoi(argv[1]);
 	int e = atoi(argv[2]);
 	int M = atoi(argv[3]);
+	int C_check = atoi(argv[4]);
 	printf("A = %d, e = %d M = %d\n",A,e,M);
 	printf("A = %x, e = %x M = %x\n",A,e,M);
 	int C = expmod(A,e,M);
-	int C_check;
-	C_check = pow(A,e);
-	C_check = C_check%M;
+	//int C_check;
+	//C_check = pow(A,e);
+	//C_check = C_check%M;
 	if(C_check != C){
 		printf("Wrong Output:\nGot: %d\nExpected: %d\n",C,C_check);
 		printf("Are you sure M is an odd prime number?\nAre you sure the constants of bit sizes are set correctly?\n");
