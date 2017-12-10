@@ -125,6 +125,13 @@ void test(void)
 
 	printf("no seg fault? Z.arr = %d\n",*Z.arr);
 	printf("Null: %d\n",NULL);
+
+	Z.arr[0] = 0;
+	Z.arr[1] = 1;
+	printf("bitShiftLeft result should be 1 0: ");
+	bitShiftLeft(Z);
+	printArr(Z,"Z");
+
 	/*
 	sub_arr(x,y,z,m,n,o);
 	for(i = 0; i < o;i++){

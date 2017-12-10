@@ -48,11 +48,12 @@ int Mont(int xhat, int yhat, int M)
 	int yi = 0;
 	int qm = 0;
 	int mask = 1;
-	//printf("Xhat: %d\nYhat: %d\n",xhat,yhat);
+	printf("Xhat: %d\nYhat: %d\n",xhat,yhat);
 	for(i=0; i < n; i++){ //i < k/2
+		printf("\nMonti: %d\n\n",i);
 		yi = mask & yhat;
 		I = yi * xhat;
-		//printf("I: %d\n",I);
+		printf("I: %d\n",I);
 		Z = Z + I;
 		qm = mask & Z;
 		Z = Z + qm*M;
@@ -88,7 +89,7 @@ int BMM(int M, int T, int U, int sel, int RmM)
 
 	int Ii = Inter(Xhat,YH,M);
 	int Im = Mont(Xhat,YL,M);
-	//printf("Ii: %d\nIm: %d\n",Ii,Im);
+	printf("Ii: %d\nIm: %d\n",Ii,Im);
 	Z = Ii + Im;
 	Z = Inter(Z,1,M);
 
@@ -108,19 +109,20 @@ int expmod(int A, int e, int M)
 	int mask = EMASK;
 	int ei;
 	for(i = l-1; i >= 0; i--){//should it be i>=n?
+		printf("\ni: %d\n\n",i);
 		Z = BMM(M,C,C,0,RmM);
-		//printf("Zmid: %d\n", Z);
+		printf("Zmid: %d\n", Z);
 		C = Mont(Z,1,M);
-		//printf("Cmid: %d\n",C);
+		printf("Cmid: %d\n",C);
 		ei = mask & e;
 		ei = ei>>i;
-		//printf("ei: %d\n",ei);
+		printf("ei: %d\n",ei);
 		if(ei){ //if ei == 1
 			Z = BMM(M,C,Ahat,1,RmM);
 			C = Mont(Z,1,M);
 		}
 		//C = Z;
-		//printf("C: %d\n", C);
+		printf("C: %d\n", C);
 		mask = mask >> 1;
 	}
 

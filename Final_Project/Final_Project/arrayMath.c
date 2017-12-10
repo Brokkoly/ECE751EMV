@@ -34,8 +34,12 @@ void freeArr(struct IOUS X){
 
 struct IOUS createArr(){
 	struct IOUS X;
+	int i;
 	X.arr = malloc(SIZE*sizeof(unsigned int));
 	X.size = SIZE;
+	for(i=0;i<X.size;i++){
+		X.arr[i] = 0;
+	}
 	return X;
 }
 
@@ -43,8 +47,8 @@ void bitShiftLeft(struct IOUS X){//assuming pre-pro done for making sure that x 
 	unsigned int* x = X.arr;
 	int m = X.size;
 	int i;
-	unsigned int temp1;//grabs msb
-	unsigned int temp2;//previous msb
+	unsigned int temp1 = 0;//grabs msb
+	unsigned int temp2 = 0;//previous msb
 	for(i = m-1; i >= 0; i--){
 		temp1 = x[i]&MSB;
 		x[i] = x[i]<<1;
@@ -58,7 +62,7 @@ void bitShiftRight(struct IOUS X){
 	unsigned int* x = X.arr;
 	int m = X.size;
 	int i;
-	unsigned int temp1;
+	unsigned int temp1=0;
 	unsigned int temp2=0;
 	//static int m = 2;
 	//unsigned int x[m] = {0xFFFFFFFF,0x00};
@@ -106,6 +110,7 @@ return;
 
 void sub_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){
 	//x is larger number, x-y never negative;
+
 	unsigned int* x = X.arr;
 	unsigned int* y = Y.arr;
 	unsigned int* z = Z.arr;
@@ -116,7 +121,7 @@ void sub_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){
 	unsigned char borrow = 0;
 	unsigned char borrowed = 0;
 	unsigned int ALF = 0xFFFFFFFF;
-	unsigned int temp;
+	unsigned int temp= 0;;
 	int xindex;
 	int yindex;
 	int zindex;
@@ -225,6 +230,7 @@ void add_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){//m corresponds to x's
 	if(carry){
 		printf("unhandled carry");
 	}
+
 	//#asm("sti")
 }
 
@@ -259,8 +265,9 @@ void printArr(struct IOUS toPrint,char* name){
 	printf("Array %s: ",name);
 	for(i=0;i<toPrint.size;i++){
 
-		printf("%x ",toPrint.arr[i]);
+		printf("%d ",toPrint.arr[i]);
 	}
+	//printf("got here");
 	printf("\n");
 
 }
