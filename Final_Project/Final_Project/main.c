@@ -3,8 +3,8 @@
 #include <math.h>
 //#include <exampleNums.h>
 #include "arrayMath.h"
-#include "inputs.h"
-#include "consts.h"
+#include "inputs8.h"
+#include "consts8.h"
 
 //int const SIZE = 512;
 int const k = K;//64; //number bits of M (k needs to be even?)
