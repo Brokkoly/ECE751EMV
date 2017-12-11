@@ -8,11 +8,14 @@
 #define ARRAYMATH_H_
 #include <math.h>
 #include <stdlib.h>
+#include "consts.h"
+#include <stdio.h>
 //#include <io.h>
 
 #define MSB 0x80000000
 #define LSB 0x1
-#define SIZE 2
+//#define SIZE 2
+//#define SIZE 2
 //#define ALF 0xFFFFFFFF
 struct IOUS {//Integers of Unusual Size
 	unsigned int* arr;
@@ -34,4 +37,5 @@ char arrToBool(struct IOUS X);
 struct IOUS arrCopy(struct IOUS origin);
 char equal(struct IOUS X, struct IOUS Y);
 void printArr(struct IOUS toPrint,char* name);
+//struct IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M);
 #endif /* ARRAYMATH_H_ */

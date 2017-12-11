@@ -4,18 +4,19 @@
 //#include <exampleNums.h>
 #include "arrayMath.h"
 #include "inputs.h"
+#include "consts.h"
 
 //int const SIZE = 512;
-int const k = 16;//64; //number bits of M (k needs to be even?)
-int const n = 8;//32; //k/2
+int const k = K;//64; //number bits of M (k needs to be even?)
+int const n = N;//32; //k/2
 //unsigned int const R2 = 4294967296; //2^n
 struct IOUS R2;
 int const R1 = 256;
-int const word = SIZE*32; //number of bits in a IOUS variable
+int  word; //number of bits in a IOUS variable
 
 //unsigned int const full = 0xFFFFFFFF; //used to mask the bits of a 32 bit variable
 struct IOUS full;
-int const L = 16;	//number of bits of e
+//int const L = 16;	//number of bits of e
 //int const EMASK = 4; //100 so the 1 is in the most significant bit of e
 struct IOUS EMASK;
 struct IOUS BMASK;
@@ -44,23 +45,36 @@ void setup(){
 		full.arr[i] = 0xFFFFFFFF;
 	}
 	//printf("Made it to line 36\n");
-	printArr(full,"full");
+	//printArr(full,"full");
 	EMASK = createArr();
+	EMASK.arr[0] = emask_extern[1];
+	//printf("line51\n");
+	EMASK.arr[1] = emask_extern[0];
 	//EMASK.arr[EMASK.size-1] = 4;
-	EMASK.arr[1]=0x8000;
+	for(i = 0; i < EMASK.size;i++){
+		//printf("made it to line 39\n");
+		EMASK.arr[i] = emask_extern[i];
+	}
 	//printf("made it to line 39\n");
-	printArr(EMASK,"EMASK");
+	//printArr(EMASK,"EMASK");
 	BMASK= createArr();
 	//BMASK.arr[BMASK.size-1] = 128;
-	BMASK.arr[1] = 0x8000;
-	printArr(BMASK,"BMASK");
+	for(i = 0; i < BMASK.size;i++){
+		BMASK.arr[i] = bmask_extern[i];
+	}
+
+	//printArr(BMASK,"BMASK");
 	R2 = createArr();
-	R2.arr[1] = 256;//4294967295;
-	R2.arr[0] = 0;
+	for(i = 0; i < R2.size;i++){
+		R2.arr[i] = R2_extern[i];
+	}
+
 	//printf("made it to line 46\n");
 	one = createArr();
 	one.arr[1]=1;
-	printArr(one,"one");
+
+	word = R2.size*32;
+	//printArr(one,"one");
 	//printf("setup fine\n");
 	//printf("sizeof(unsigned int): %d\n",sizeof(unsigned int));
 }
@@ -91,11 +105,6 @@ struct IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M)//
 		//Z = 2*Z;
 		bitShiftLeft(Z);
 
-		if((first>16)&&(first<32)){
-			printf("i = %d: ",i);
-			printArr(Z,"Z@94");
-		}
-		
 		//bi = mask & b;
 		bitwiseAnd(mask,b,bi);
 		//bi = bi>>i;
@@ -128,28 +137,16 @@ struct IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M)//
 		
 
 		if(greaterThanEqual(Z,M)){
-			//printf("first greaterThanEqual\n");
-			if((first>16)&&(first<32)){
-				printArr(Z,"Z");
-				printArr(M,"M");
-			}
 			temp = arrCopy(Z);
 			zeroArr(Z);
 			sub_arr(temp,M,Z);
 			freeArr(temp);
 			if((first>16)&&(first<32)){
 				//first++;
-				printArr(Z,"Z-M");
+				//printArr(Z,"Z-M");
 			}
 		}
 		if(greaterThanEqual(Z,M)){
-			if((first>16)&&(first<32)){
-				//printf("second greaterThanEqual\n");	
-			}
-			
-
-			//printArr(Z,"Z");
-			//printArr(M,"M");
 			temp = arrCopy(Z);
 			zeroArr(Z);
 			sub_arr(temp,M,Z);
@@ -183,8 +180,8 @@ struct IOUS Mont(struct IOUS xhat, struct IOUS yhat, struct IOUS M)
 	struct IOUS mask;
 	struct IOUS temp;
 	//printf("Xhat: %d\nYhat: %d\n",xhat,yhat);
-	printArr(xhat,"Xhat");
-	printArr(yhat,"Yhat");
+	//printArr(xhat,"Xhat");
+	//printArr(yhat,"Yhat");
 	Z = createArr();
 	I = createArr();
 	yi = createArr();
@@ -192,13 +189,13 @@ struct IOUS Mont(struct IOUS xhat, struct IOUS yhat, struct IOUS M)
 	mask = createArr();
 	mask.arr[mask.size-1] = 1;
 	for(i=0; i < n; i++){ //i < k/2
-		printf("\nMonti: %d\n\n",i);	
+		//printf("\nMonti: %d\n\n",i);	
 		//yi = mask & yhat;
 		bitwiseAnd(mask,yhat,yi);
 		
 		//I = yi * xhat;//
 		if(arrToBool(yi)){
-			printArr(xhat,"Xhat");
+			//printArr(xhat,"Xhat");
 			temp = arrCopy(Z);
 			zeroArr(Z);
 			add_arr(temp,xhat,Z);
@@ -310,12 +307,12 @@ struct IOUS BMM(struct IOUS M,struct IOUS T,struct IOUS U, int sel, struct IOUS 
 	//printArr(YL,"YLA");
 
 	Ii = Inter(Xhat,YH,M);
-	printf("past Ii\n");
+	//printf("past Ii\n");
 	Im = Mont(Xhat,YL,M);
 	//printf("past Ii/Im\n");
 	//printf("Ii: %d\nIm: %d\n",Ii,Im);
-	printArr(Ii,"Ii");
-	printArr(Im,"Im");
+	//printArr(Ii,"Ii");
+	//printArr(Im,"Im");
 
 	//Z = Ii + Im;
 	add_arr(Ii,Im,Z);
@@ -352,16 +349,16 @@ struct IOUS expmod(struct IOUS A, struct IOUS e, struct IOUS M)
 	C = createArr();
 	C.arr[C.size-1] = 1;
 	
-	printf("l: %d\n", l);
-	printf("expmod init\n");
+	//printf("l: %d\n", l);
+	//printf("expmod init\n");
 	cinput = arrCopy(one);
 	//int Z = 0;
 	
 	RmM = Inter(R2,R2,M);			//R^2modM
-	printArr(RmM,"RmM");
+	//printArr(RmM,"RmM");
 	//printf("finished Inter 1\n");
 	Ahat = Inter(A,R2,M);		//(A*R)modM
-	printArr(Ahat,"Ahat");
+	//printArr(Ahat,"Ahat");
 	//printf("finished inter 2\n");
 	//printf("RmM: %d\nAhat: %d\n",RmM,Ahat);
 	mask = arrCopy(EMASK);
@@ -375,7 +372,7 @@ struct IOUS expmod(struct IOUS A, struct IOUS e, struct IOUS M)
 		//printf("In For Loop\n");
 		//zeroArr(Zeroes);
 		//printf("Zeroes\n");
-		printf("\ni: %d\n\n",i);
+		//printf("\ni: %d\n\n",i);
 		if(!freed){
 			freeArr(Z);	
 		}
@@ -388,7 +385,7 @@ struct IOUS expmod(struct IOUS A, struct IOUS e, struct IOUS M)
 		freed = 0;
 		//printf("past BMM1\n");
 		//printf("Zmid: %d\n", Z);
-		printArr(Z,"Zmid");
+		//printArr(Z,"Zmid");
 		freeArr(C);
 		zeroArr(cinput);
 		cinput.arr[cinput.size-1] = 1;
@@ -397,7 +394,7 @@ struct IOUS expmod(struct IOUS A, struct IOUS e, struct IOUS M)
 		zeroArr(cinput);
 		cinput.arr[cinput.size-1] = 1;
 		//printf("Cmid: %d\n",C);
-		printArr(C,"Cmid");
+		//printArr(C,"Cmid");
 		//ei = mask & e;
 		zeroArr(ei);
 		bitwiseAnd(mask,e,ei);
@@ -407,7 +404,7 @@ struct IOUS expmod(struct IOUS A, struct IOUS e, struct IOUS M)
 		}
 		//printf("past BSRei\n");
 		//printf("ei: %d\n",ei);
-		printArr(ei,"ei");
+		//printArr(ei,"ei");
 		/*if(ei){ //if ei == 1
 		Z = BMM(M,C,Ahat,1,RmM);
 		C = Mont(Z,1,M);
@@ -420,7 +417,7 @@ struct IOUS expmod(struct IOUS A, struct IOUS e, struct IOUS M)
 			//printf("past freeArr\n");
 			Z = BMM(M,C,Ahat,1,RmM);
 			//printf("past BMM\n");
-			printArr(Z,"Z");
+			//printArr(Z,"Z");
 			zeroArr(cinput);
 			cinput.arr[cinput.size-1] = 1;
 			freeArr(C);
@@ -429,7 +426,7 @@ struct IOUS expmod(struct IOUS A, struct IOUS e, struct IOUS M)
 		//printf("past arrToBool\n");
 		//C = Z;
 		//printf("C: %d\n", C);
-		printArr(C,"C");
+		//printArr(C,"C");
 
 		//mask = mask >> 1;
 		//printArr(mask,"m");
@@ -467,7 +464,7 @@ void main(int argc, char* argv[])
 		return;
 	}
 	*/
-	printf("Made it to line 353\n");
+	//printf("Made it to line 353\n");
 	setup();
 	printf("finished Setup\n");
 	/*if(sizeof(int) !=4 ){
