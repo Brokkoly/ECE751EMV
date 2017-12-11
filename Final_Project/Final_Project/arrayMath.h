@@ -6,7 +6,7 @@
  */ 
 #ifndef ARRAYMATH_H_
 #define ARRAYMATH_H_
-#include <math.h>
+//#include <math.h>
 #include <stdlib.h>
 #include "consts8.h"
 #include <stdio.h>
