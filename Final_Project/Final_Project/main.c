@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+//#include <math.h>
 //#include <exampleNums.h>
 #include "arrayMath.h"
 #include "inputs8.h"
