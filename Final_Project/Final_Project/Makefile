@@ -7,8 +7,8 @@ all : finalProject testMath modexp
 
 
 
-finalProject: main.c inputs8.c inputs8.h arrayMath.c arrayMath.h consts8.c consts8.h
-	gcc -o finalProject main.c inputs8.c arrayMath.c consts8.c -I.
+finalProject: main.c inputs64.c inputs64.h arrayMath.c arrayMath.h consts64.c consts64.h
+	gcc -o finalProject main.c inputs64.c arrayMath.c consts64.c -I.
 testMath: testMainFile.c arrayMath.c arrayMath.h testMain.c testMain.h
 	gcc -o testMath testMainFile.c arrayMath.c testMain.c -I.
 modexp: modexp.c

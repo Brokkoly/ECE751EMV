@@ -3,8 +3,9 @@
 //#include <math.h>
 //#include <exampleNums.h>
 #include "arrayMath.h"
-#include "inputs8.h"
-#include "consts8.h"
+#include "inputs32.h"
+#include "consts32.h"
+#include <limits.h>
 
 //int const SIZE = 512;
 int const k = K;//64; //number bits of M (k needs to be even?)
@@ -39,6 +40,7 @@ struct IOUS one;
 void setup(){
 	
 	int i;
+	printf("UINT_MAX: %d\n",UINT_MAX);
 	full = createArr();
 	//printf("Made it to line 32\n");
 	for(i = 0; i < full.size;i++){
@@ -99,26 +101,37 @@ struct IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M)//
 	//zeroArr(Z);
 	//
 	//printArr(mask,"mask");
-
+	//printArr(Z,"ZafterMade");
+	//printArr(I,"IafterMade");
+	//printArr(bi,"biafterMade");
+	//printArr(mask,"maskAfterMade");
+	//printArr(d,"d");
 	for(i = k-1; i >= 0; i--){	//i >= k/2
 		//confirm i>=n
 		//Z = 2*Z;
 		bitShiftLeft(Z);
-
+		//printArr(Z,"Z1");
 		//bi = mask & b;
 		bitwiseAnd(mask,b,bi);
+		//printArr(bi,"bi1");
 		//bi = bi>>i;
 		for(j = 0; j < i;j++){
 			bitShiftRight(bi);
 		}
 		//I = bi * d; solution:
+		//printArr(bi,"bi2");
 		if(arrToBool(bi)){
 			//Z = Z+d;
+
 			temp = arrCopy(Z);
+			//printArr(temp,"temp1");
 			zeroArr(Z);
 			add_arr(temp,d,Z);
+			//printArr(Z,"Z1.5");
 			freeArr(temp);
+
 		}
+		//printArr(Z,"Z2");
 		//printf("I: %d\n",I);
 		//Z = Z + I;:
 		/*
@@ -141,11 +154,8 @@ struct IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M)//
 			zeroArr(Z);
 			sub_arr(temp,M,Z);
 			freeArr(temp);
-			if((first>16)&&(first<32)){
-				//first++;
-				//printArr(Z,"Z-M");
-			}
 		}
+		//printArr(Z,"Z3");
 		if(greaterThanEqual(Z,M)){
 			temp = arrCopy(Z);
 			zeroArr(Z);
@@ -153,6 +163,7 @@ struct IOUS Inter(struct IOUS b, struct IOUS d, struct IOUS M)//
 			freeArr(temp);
 			//printArr(Z,"Z-M");
 		}
+		//printArr(Z,"Z4");
 		//printf("Z: %d\nbi: %d\n",Z,bi);
 		//mask = mask>>1;
 		bitShiftRight(mask);

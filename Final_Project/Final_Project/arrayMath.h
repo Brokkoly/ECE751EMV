@@ -8,7 +8,7 @@
 #define ARRAYMATH_H_
 //#include <math.h>
 #include <stdlib.h>
-#include "consts8.h"
+#include "consts32.h"
 #include <stdio.h>
 //#include <io.h>
 

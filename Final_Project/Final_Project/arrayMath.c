@@ -177,7 +177,7 @@ void add_arr(struct IOUS X, struct IOUS Y, struct IOUS Z){//m corresponds to x's
 	//#asm("cli")
 	//SREG = (SREG&0xFE);//TODO: Note to self, figure out byte storage
 	
-	for(i = 0; i <= num_max;i++){
+	for(i = 1; i <= num_max;i++){
 		xindex = m-i;
 		yindex = n-i;
 		zindex = o-i;
@@ -265,7 +265,7 @@ void printArr(struct IOUS toPrint,char* name){
 	printf("Array %s: ",name);
 	for(i=0;i<toPrint.size;i++){
 
-		printf("%d ",toPrint.arr[i]);
+		printf("%x ",toPrint.arr[i]);
 	}
 	//printf("got here");
 	printf("\n");
